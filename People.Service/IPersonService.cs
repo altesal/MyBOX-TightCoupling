@@ -1,47 +1,28 @@
-﻿using System;
+﻿using PeopleViewer.SharedObjects;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
 using System.ServiceModel;
-using System.ServiceModel.Web;
-using System.Text;
 
 namespace People.Service
 {
-    
     [ServiceContract]
     public interface IPersonService
     {
+        [OperationContract]
+        List<Person> GetPeople();
 
         [OperationContract]
-        string GetData(int value);
+        Person GetPerson(string lastName);
 
         [OperationContract]
-        CompositeType GetDataUsingDataContract(CompositeType composite);
+        void AddPerson(Person newPerson);
 
-        // TODO: Add your service operations here
-    }
+        [OperationContract]
+        void UpdatePerson(string lastName, Person updatedPerson);
 
+        [OperationContract]
+        void DeletePerson(string lastName);
 
-    // Use a data contract as illustrated in the sample below to add composite types to service operations.
-    [DataContract]
-    public class CompositeType
-    {
-        bool boolValue = true;
-        string stringValue = "Hello ";
-
-        [DataMember]
-        public bool BoolValue
-        {
-            get { return boolValue; }
-            set { boolValue = value; }
-        }
-
-        [DataMember]
-        public string StringValue
-        {
-            get { return stringValue; }
-            set { stringValue = value; }
-        }
+        [OperationContract]
+        void UpdatePeople(List<Person> updatedPeople);
     }
 }

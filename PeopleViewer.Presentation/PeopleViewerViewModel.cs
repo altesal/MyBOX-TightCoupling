@@ -1,14 +1,16 @@
-﻿using System;
+﻿using PeopleViewer.SharedObjects;
+using PersonRepository.Service;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Windows.Input;
 
 namespace PeopleViewer.Presentation
 {
     public class PeopleViewerViewModel : INotifyPropertyChanged
     {
         protected ServiceRepository Repository;
+
         private IEnumerable<Person> _people;
         public IEnumerable<Person> People
         {
@@ -30,36 +32,75 @@ namespace PeopleViewer.Presentation
         #region Commands
 
         #region RefreshCommand Standard Stuff
+
+        private RefreshCommand _refreshPeopleCommand = new RefreshCommand();
+        public RefreshCommand RefreshPeopleCommand
+        {
+            get
+            {
+                if (_refreshPeopleCommand.ViewModel == null)
+                    _refreshPeopleCommand.ViewModel = this;
+                return _refreshPeopleCommand;
+            }
+        }
+
+        public class RefreshCommand : ICommand
+        {
+            public PeopleViewerViewModel ViewModel { get; set; }
+            public event EventHandler CanExecuteChanged;
+            public bool CanExecute(object parameter)
+            {
+                return true;
+            }
         #endregion RefreshCommand Standard Stuff
 
-        public void Execute(object parameter)
-        {
-            ViewModel.People = ViewModel.Repository.GetPeople();
+            public void Execute(object parameter)
+            {
+                ViewModel.People = ViewModel.Repository.GetPeople();
+            }
         }
-
 
         #region ClearCommand Standard Stuff
-        public void Execute(object parameter)
+
+        private ClearCommand _clearPeopleCommand = new ClearCommand();
+        public ClearCommand ClearPeopleCommand
         {
-            ViewModel.People = new List<Person>();
+            get
+            {
+                if (_clearPeopleCommand.ViewModel == null)
+                    _clearPeopleCommand.ViewModel = this;
+                return _clearPeopleCommand;
+            }
         }
 
-        #endregion ClearCommand Standard Stuff
+        public class ClearCommand : ICommand
+        {
+            public PeopleViewerViewModel ViewModel { get; set; }
+            public event EventHandler CanExecuteChanged;
+            public bool CanExecute(object parameter)
+            {
+                return true;
+            }
 
+        #endregion
 
+            public void Execute(object parameter)
+            {
+                ViewModel.People = new List<Person>();
+            }
+        }
 
-        #endregion Commands
+        #endregion
 
         #region INotifyPropertyChanged Members
 
         public event PropertyChangedEventHandler PropertyChanged;
-        private void RaisePropertyChanged(string properyName)
+        private void RaisePropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        #endregion INotifyPropertyChanged Members
-
+        #endregion
     }
 }
